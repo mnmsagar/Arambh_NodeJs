@@ -22,7 +22,6 @@ exports.userSignUp = async (req, res) => {
 };
 
 exports.userLogIn = (req, res) => {
-  console.log(req.body);
   const user = data.find((element) => {
     return element.email === req.body.email;
   });
