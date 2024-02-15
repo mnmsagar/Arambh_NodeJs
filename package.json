@@ -3,7 +3,8 @@
     "dotenv": "^16.4.4",
     "express": "^4.18.2",
     "joi": "^17.12.1",
-    "nodemon": "^3.0.3"
+    "nodemon": "^3.0.3",
+    "randomstring": "^1.3.0"
   },
   "name": "arambh_nodejs",
   "description": "",

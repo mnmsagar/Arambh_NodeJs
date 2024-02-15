@@ -1,14 +1,14 @@
 const express = require("express");
-const { userLogIn, userSignUp } = require("../controllers/controller");
+const { userLogIn, userSignUp } = require("../controllers/users.controller");
 const {validateRequest} = require('../middleware/validation');
 
-const router = express.Router();
+const userRouter = express.Router();
 
-router.route("/signup").post(validateRequest,userSignUp);
-router.route("/login").post(userLogIn);
-// router.route("/reset-password").post(resetPassword);
-// router.route("forget-password").post(forgetPass);
+userRouter.route("/signup").post(validateRequest,userSignUp);
+userRouter.route("/login").post(userLogIn);
+// userRouter.route("/reset-password").post(resetPassword);
+// userRouter.route("forget-password").post(forgetPass);
 
 module.exports={
-    router
+    userRouter
 }
