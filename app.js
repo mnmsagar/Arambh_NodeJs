@@ -4,6 +4,7 @@ const {router} = require('./routes/users.routes');
 
 app.use(express.json());
 
+// app.use('/',)
 app.use('/users',router);
 app.use('*',(req,res)=>{
     res.json({
