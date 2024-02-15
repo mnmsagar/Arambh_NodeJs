@@ -1,18 +1,19 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const {router} = require('./routes/users.routes');
+const { userRouter } = require("./routes/users.routes");
+const { crudRouter } = require("./routes/crud.routes");
 
 app.use(express.json());
 
-// app.use('/',)
-app.use('/users',router);
-app.use('*',(req,res)=>{
-    res.json({
-        message : "Not Valid !!!",
-        statusCode : 401
-    })
-})
+app.use("/", crudRouter);
+app.use("/users", userRouter);
+app.use("*", (req, res) => {
+  res.json({
+    message: "Not Valid !!!",
+    statusCode: 401,
+  });
+});
 
-app.listen(3000,()=>{
-    console.log("Server Started !!")
-})
+app.listen(3000, () => {
+  console.log("Server Started !!");
+});
