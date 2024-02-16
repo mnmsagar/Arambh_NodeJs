@@ -1,42 +1,47 @@
+require("dotenv").config();
 const fs = require("fs");
-
-const data = JSON.parse(fs.readFileSync("./models/data.json", "utf8"));
-
-exports.userSignUp = async (req, res) => {
-  const user = data.find((element)=>{
-    return element.email === req.body.email;
-  })
-  if(user){
-    res.json({
-      message : "user already exist"
-    })
-    return;
-  }
-  data.push(req.body);
-  await fs.writeFile("./models/data.json", JSON.stringify(data), (err) => {
-    res.json({
-      message: "Error Signing Up",
-    });
-  });
-  res.json({ message: "Successfully Signed Up" });
+const bcrypt = require("bcrypt");
+const { User } = require("../models/users.schema");
+const hashedPasswordGenerator = (password) => {
+  return bcrypt.hashSync(password, 10);
 };
 
-exports.userLogIn = (req, res) => {
-  const user = data.find((element) => {
-    return element.email === req.body.email;
+exports.userSignUp = async (req, res) => {
+  const { name, email, password, phoneNumber } = req.body;
+  const existingUser = await User.findOne({ email });
+  console.log(existingUser);
+  if (existingUser) {
+    return res.status(400).json({ error: "User already exists" });
+  }
+
+  const hashedPassword = hashedPasswordGenerator(password);
+
+  // Create a new user
+  const newUser = new User({
+    name,
+    email,
+    password: hashedPassword,
+    phoneNumber,
   });
+
+  // Save the new user to the database
+  await newUser.save();
+
+  res.status(201).json({ message: "User created successfully", user: newUser });
+};
+
+exports.userLogIn = async (req, res) => {
+  const { email, password } = req.body;
+  const user = await User.findOne({ email });
   if (!user) {
-    return res.json({
-      message: "Check username/password",
-    });
+    return res.status(404).json({ error: "User not found" });
   }
-  if (!user.password === req.body.password) {
-    res.json({
-      message: "Check username.password",
-    });
-    return;
+  // Check if the password is correct
+  let isPasswordValid = bcrypt.compareSync(password, user.password);
+  if (!isPasswordValid) {
+    return res.status(401).json({ error: "Invalid password" });
   }
-  res.json({
-    message : "Logged In Successfully !!"
-  })
+
+  // If user exists and password is correct, login successful
+  res.status(200).json({ message: "Login successful", user });
 };

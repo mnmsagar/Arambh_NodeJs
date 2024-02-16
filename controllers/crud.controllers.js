@@ -1,7 +1,4 @@
 const fs = require("fs");
-
-const data = JSON.parse(fs.readFileSync("./models/crud.json"));
-
 const { Product } = require("../models/products.schema");
 
 exports.getObj = async (req, res) => {

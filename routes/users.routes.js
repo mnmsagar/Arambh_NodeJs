@@ -4,7 +4,7 @@ const {validateRequest} = require('../middleware/validation');
 
 const userRouter = express.Router();
 
-userRouter.route("/signup").post(validateRequest,userSignUp);
+userRouter.route("/signup").post(userSignUp);
 userRouter.route("/login").post(userLogIn);
 // userRouter.route("/reset-password").post(resetPassword);
 // userRouter.route("forget-password").post(forgetPass);
