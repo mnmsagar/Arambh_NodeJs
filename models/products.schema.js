@@ -8,4 +8,3 @@ const productSchema = new Schema({
 })
 
 exports.Product = mongoose.model('Product',productSchema);  // first we decide schema and then we create model for that as model will let uss create real object
-

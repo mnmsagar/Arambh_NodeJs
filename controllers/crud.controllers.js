@@ -3,7 +3,6 @@ const { Product } = require("../models/products.schema");
 
 exports.getObj = async (req, res) => {
   const product = await Product.findById(req.params.id);
-
   if (!product) {
     // If product doesn't exist, return an error
     return res.status(404).json({ error: "Product not found" });
@@ -15,7 +14,6 @@ exports.getObj = async (req, res) => {
 exports.updateObj = async (req, res) => {
   // Check if the product exists
   const product = await Product.findById(req.params.id);
-
   if (!product) {
     // If product doesn't exist, return an error
     return res.status(404).json({ error: "Product not found" });
@@ -28,7 +26,6 @@ exports.updateObj = async (req, res) => {
 
 exports.deleteObj = async (req, res) => {
   const product = await Product.findById(req.params.id);
-
   if (!product) {
     // If product doesn't exist, return an error
     return res.status(404).json({ error: "Product not found" });

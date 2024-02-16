@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-app.use("/", crudRouter);
+app.use("/products", crudRouter);
 app.use("/users", userRouter);
 app.use("*", (req, res) => {
   res.json({
@@ -25,5 +25,5 @@ async function main() {
 main().catch((err) => console.log(err));
 
 app.listen(PORT, () => {
-  console.log("Server Started !!");
+  console.log(`Server Started on port ${PORT} !!`);
 });
