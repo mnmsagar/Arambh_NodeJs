@@ -2,102 +2,58 @@ const fs = require("fs");
 
 const data = JSON.parse(fs.readFileSync("./models/crud.json"));
 
-exports.getObj = (req, res) => {
-  const id = req.params.id;
-  const obj = data.find((ele) => {
-    return ele.id == id;
-  });
-  if (!obj) {
-    res.json({
-      message: "Not Found!!",
-    });
-    return;
+const { Product } = require("../models/products.schema");
+
+exports.getObj = async (req, res) => {
+  const product = await Product.findById(req.params.id);
+
+  if (!product) {
+    // If product doesn't exist, return an error
+    return res.status(404).json({ error: "Product not found" });
   }
-  res.json(obj);
+  // If product exists, return it
+  return res.status(200).json(product);
 };
 
 exports.updateObj = async (req, res) => {
-  const id = req.params.id;
-  const newData = req.body;
-  const Idx = data.findIndex((ele) => {
-    return ele.id === id;
-  });
-  console.log(Idx);
-  if (Idx === -1) {
-    res.json({
-      message: "Not Found!!",
-    });
-    return;
+  // Check if the product exists
+  const product = await Product.findById(req.params.id);
+
+  if (!product) {
+    // If product doesn't exist, return an error
+    return res.status(404).json({ error: "Product not found" });
   }
-  const newObj = {
-    id: req.params.id,
-    productName: newData.productName,
-    price: newData.price,
-    brand: newData.brand,
-  };
-
-  data[Idx] = newObj;
-
-  await fs.writeFile("./models/crud.json", JSON.stringify(data), (err) => {
-    if (err) {
-      res.json({
-        message: "Error Updating !!",
-      });
-      return;
-    }
-    res.json({
-      message: "Updated Successfully!!",
-    });
-  });
+  // If product exists, update its fields
+  product.set(req.body); // assuming req.body contains updated fields
+  await product.save();
+  return res.status(200).json(product);
 };
 
 exports.deleteObj = async (req, res) => {
-  const id = req.params.id;
-  const Idx = data.findIndex((ele) => {
-    return ele.id === id;
-  });
-  console.log(Idx);
-  if (Idx === -1) {
-    res.json({
-      message: "Not Found!!",
-    });
-    return;
+  const product = await Product.findById(req.params.id);
+
+  if (!product) {
+    // If product doesn't exist, return an error
+    return res.status(404).json({ error: "Product not found" });
   }
-  data.splice(Idx, 1);
-  await fs.writeFile("./models/crud.json", JSON.stringify(data), (err) => {
-    if (err) {
-      res.json({
-        message: "Error saving !!",
-      });
-      return;
-    }
-    res.json({
-      message: "File Deleted Successfully Successfully!!",
-    });
-  });
+  // If product exists, delete it
+  await product.remove();
+  return res.status(200).json({ message: "Product deleted successfully" });
 };
 
 exports.createObj = async (req, res) => {
-  const newData = req.body;
-  const newObj = {
-    id: Date.now().toString(),
-    productName: newData.productName,
-    price: newData.price,
-    brand: newData.brand,
-  };
-  // Generate unique ID for the new data
-
-  data.push(newObj);
-  await fs.writeFile("./models/crud.json", JSON.stringify(data), (err) => {
-    if (err) {
-      res.json({
-        message: "Error saving !!",
-      });
-      return;
-    }
-    res.json({
-      message: "file created Successfully!!",
-    });
+  const existingProduct = await Product.findOne({
+    name: req.body.name,
+    price: req.body.price,
+    brand: req.body.brand,
   });
-};
 
+  if (existingProduct) {
+    // If product exists, return an error
+    return res.status(400).json({ error: "Product already exists" });
+  }
+  const newObj = new Product(req.body);
+  newObj.id = Date.now().toString();
+  await newObj.save();
+  res.status(201).json({ message: "Object Created" });
+};

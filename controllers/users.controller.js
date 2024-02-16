@@ -26,10 +26,9 @@ exports.userLogIn = (req, res) => {
     return element.email === req.body.email;
   });
   if (!user) {
-    res.json({
+    return res.json({
       message: "Check username/password",
     });
-    return;
   }
   if (!user.password === req.body.password) {
     res.json({
