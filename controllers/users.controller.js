@@ -3,6 +3,7 @@ const fs = require("fs");
 const bcrypt = require("bcrypt");
 const { User } = require("../models/users.schema");
 const jwt = require("jsonwebtoken");
+const { error } = require("console");
 const hashedPasswordGenerator = (password) => {
   return bcrypt.hashSync(password, 10);
 };
@@ -33,6 +34,9 @@ exports.userSignUp = async (req, res) => {
       .json({ message: "User created successfully", user: newUser, token });
   } catch (err) {
     console.log(err);
+    res.status(500).json({
+      message: error.message,
+    });
   }
 };
 
